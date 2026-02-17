@@ -6,9 +6,11 @@ import { useRouter } from 'next/navigation'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
+  const [isMounted, setIsMounted] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
+    setIsMounted(true)
     const supabase = createClient()
     
     const {
@@ -27,7 +29,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [router])
 
-  if (isLoading) {
+  // Don't render loading state on first mount to prevent hydration mismatch
+  if (isLoading && isMounted) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
